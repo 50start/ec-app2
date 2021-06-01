@@ -1,18 +1,20 @@
 import React from 'react'
-import {getUserUid,getUserName,getUserId} from '../reducks/users/selectors'
-import {useSelector} from "react-redux"
+import {getUserName,getUserId} from '../reducks/users/selectors'
+import {useSelector, useDispatch} from "react-redux"
+import { signOut } from '../reducks/users/operations'
 
 const Home = () =>{
+  const dispatch = useDispatch()
   const selector = useSelector(state => state); //store全体のstateを取得する
-  const uid = getUserUid(selector)//reduxのstoreのusersstate中のuidを取得する
+  const uid = getUserId(selector)//reduxのstoreのusersstate中のuidを取得する
   const username = getUserName(selector)
-  const id = getUserId(selector)
+  
     return(
       <div>
         <h2>Home</h2>
-        <p>{uid}</p>
-        <p>{username}</p>
-        <p>{id}</p>
+        <p>ユーザーID；{uid}</p>
+        <p>ユーザー名：{username}</p>
+        <button onClick={() => dispatch(signOut())}>SIGN OUT</button>
 
       </div>
     )

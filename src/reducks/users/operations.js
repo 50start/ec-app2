@@ -2,6 +2,31 @@ import {signInAction} from "./actions";
 import {push} from 'connected-react-router';
 import {auth, db, FirebaseTimestamp} from '../../firebase/index'
 
+export const listenAuthState = () =>{ //認証リッスン関数の作成
+  return async (dispatch) => {
+    return auth.onAuthStateChanged( user => { //戻り値user
+       if(user){//userが存在していたら
+        const uid = user.uid
+
+         db.collection('users').doc(uid).get() //データベースuserscollectionの中からuidのデーターを受け取る　
+         .then(snapshot => {  //クエリ投げる
+           const data = snapshot.data() //dataを取ってくる
+
+           dispatch(signInAction({
+             isSignedIn: true,　//サインインされたよ　false=>true　ユーザーの情報をとる reduxを更新
+             role: data.role,
+             uid: uid,
+             username: data.username
+　　　　　}))
+         dispatch(push('/'))  //signInActionの処理が終わったらdispatch! ログイン認証完了！
+　        })
+　　　　　}else{
+         dispatch(push('/signin'))　//サインインページに飛ばされる
+       }
+    })
+  }
+}
+
 export const signIn = (email, password) =>{
   return  async(dispatch) => {
     // Validation
@@ -32,31 +57,6 @@ export const signIn = (email, password) =>{
      })
   }
 }
-
-
-
-    /*const state = getState() //現在のStateを取得
-    const isSignedIn = state.users.isSignedIn
-
-    if(!isSignedIn){
-      const url = 'https://api.github.com/users/50start'
-
-      const response = await fetch(url)
-      .then(res => res.json())
-      .catch(()=> null)
-
-      const username = response.login
-      const id = response.id
-      
-
-      dispatch(signInAction({
-        isSignedIn: true,
-        uid: "3253595",
-        username: username,
-        id: id
-    }))
-      dispatch(push('/'))
-    }*/
 
 export const signUp = (username, email, password, confirmPassword)=>{
   return async(dispatch) => {
@@ -90,9 +90,17 @@ export const signUp = (username, email, password, confirmPassword)=>{
       .then(()=>{
         dispatch(push('/')) //TOPページに戻る
       　　　})
-    　　}
+    　　　}
   　　})
  　}
 }
 
-
+export const signOut = () =>{ //reduxのstateの初期化をする
+  return async (dispatch) =>{
+　　　auth.signOut()
+       .then(() => {
+         dispatch(signInAction())//signInActionをよびだす
+         dispatch(push('/signin')) //サインイン画面に戻す
+       })
+  }
+}
