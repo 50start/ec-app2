@@ -3,6 +3,7 @@ import React, {useCallback, useState} from 'react'
 import {PrimaryButton, TextInput} from '../components/UIkit';
 import {signIn} from '../reducks/users/operations'
 import {useDispatch} from "react-redux";
+import {push} from "connected-react-router";
 
 const SignIn = () => {
 
@@ -11,9 +12,8 @@ const SignIn = () => {
   const [email, setEmail] = useState(""),
         [password, SetPassword] = useState("");
         
-        
-
-    const inputEmail = useCallback((event) =>{ 
+    
+   const inputEmail = useCallback((event) =>{ 
       setEmail(event.target.value) 
      },[setEmail]);
 
@@ -43,6 +43,9 @@ return(
             onClick={()=>dispatch(signIn(email, password))}
             //operationで作った関数を実行　ローカルで管理しているstateを渡す
          />
+         <div className="module-spacer--medium"/>
+         <p onClick={() => dispatch(push('/signup'))}>アカウントをお持ちでない方はこちら</p>
+         <p onClick={() => dispatch(push('/signin/reset'))}>パスワードを忘れた方はこちら</p>
    </div>
    </div>
 
