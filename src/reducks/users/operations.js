@@ -18,7 +18,7 @@ export const listenAuthState = () =>{ //認証リッスン関数の作成
              uid: uid,
              username: data.username
 　　　　　}))
-         dispatch(push('/'))  //signInActionの処理が終わったらdispatch! ログイン認証完了！
+         //dispatch(push('/'))  //signInActionの処理が終わったらdispatch! ログイン認証完了！
 　        })
 　　　　　}else{
          dispatch(push('/signin'))　//サインインページに飛ばされる
