@@ -1,4 +1,4 @@
-import {signInAction} from "./actions";
+import {signInAction, signOutAction} from "./actions";
 import {push} from 'connected-react-router';
 import {auth, db, FirebaseTimestamp} from '../../firebase/index'
 
@@ -116,7 +116,7 @@ export const signOut = () =>{ //reduxのstateの初期化をする
   return async (dispatch) =>{
 　　　auth.signOut()
        .then(() => {
-         dispatch(signInAction())//signInActionをよびだす
+         dispatch(signOutAction())//signOutActionをよびだす
          dispatch(push('/signin')) //サインイン画面に戻す
        })
   }
