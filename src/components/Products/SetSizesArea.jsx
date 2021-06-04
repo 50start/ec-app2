@@ -1,4 +1,4 @@
-import React,{useState, useCallback} from 'react'
+import React,{useState, useCallback, useEffect} from 'react'
 import TableContainer from '@material-ui/core/TableContainer';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -36,7 +36,45 @@ const inputSize = useCallback((event) => {
   
 const inputQuantity = useCallback((event) => {
       setQuantity(event.target.value)
-      }, [setQuantity]);    
+      }, [setQuantity]);  
+      
+const addSize = (index, size, quantity) =>{
+  if(size === "" || quantity === ""){
+    return false
+  }else{ //前回のstateをprevState使って更新　 配列を使って更新(配列に要素を追加）　新しい値を定義　オブジェクトを定義
+    if(index === props.sizes.length) { //現在のsizesのlength 要素（sizeの列)の数
+    props.setSizes(prevState => [...prevState,{size: size, quantity: quantity}])
+    setIndex(index + 1)　//初期値0       
+    setSize("")
+    setQuantity(0)
+    } else{ //編集の時はここの条件分岐が走る
+        const newSizes = props.sizes 
+        newSizes[index] = {size: size, quantity: quantity}
+        props.setSizes(newSizes) //まるッと配列を更新
+        setIndex(newSizes.length)
+        setSize("")
+        setQuantity(0)
+    }
+  }
+};
+
+const editSize = (index, size, quantity) => {  //編集用　
+  setIndex(index)　
+  setSize(size)
+  setQuantity(quantity)
+  //引数で渡ってきた値を現在のstateにsetする
+}
+
+const deleteSize = (deleteIndex) => {
+  const newSizes = props.sizes.filter((item, i) => i !== deleteIndex)
+                              //filter 条件式にマッチするものだけを抽出した配列だけを返す
+                              //i !== deleteIndexとすることで削除するindex以外のものの要素の配列だけを返す 削除するもの以外を残す
+   props.setSizes(newSizes)   //削除されるもの以外の配列が残る   　newSizesが新たにsetされる                    
+}
+
+useEffect(() => {
+  setIndex(props.sizes.length)
+},[props.sizes.length])
       
 
  return(
@@ -53,18 +91,18 @@ const inputQuantity = useCallback((event) => {
          </TableHead>
          <TableBody>
            {props.sizes.length > 0 &&(
-             props.sizes.map((item, index) => (
+             props.sizes.map((item, i) => (
                  <TableRow key={item.size}>
                    <TableCell>{item.size}</TableCell>
                    <TableCell>{item.quantity}</TableCell>
-                   <TableCell>
-                     <IconButton className={classes.iconCell}>
-                         <EditIcon/>
+                   <TableCell>                                 {/*mapで回しているのでsizeではなくitem.sizeと書く*/}
+                     <IconButton className={classes.iconCell} onClick={() => editSize(i, item.size, item.quantity)}>
+                         <EditIcon/>                           {/*何番目のsizeを編集しているのか(i)でお知らせ*/}
                      </IconButton>
                      </TableCell>
                      <TableCell>
-                     <IconButton className={classes.iconCell}>
-                         <DeleteIcon/>
+                     <IconButton className={classes.iconCell} onClick={() => deleteSize(i)}>
+                         <DeleteIcon/>                                            {/* i = deleteIndex */}
                      </IconButton>
                   </TableCell>
              </TableRow>
@@ -82,7 +120,7 @@ const inputQuantity = useCallback((event) => {
           onChange={inputQuantity} rows={1} value={quantity} type={"number"}
          />
        </div>
-       <IconButton className={classes.checkIcon}>
+       <IconButton className={classes.checkIcon} onClick={() => addSize(index, size, quantity)}>
          <CheckCircleIcon/>
        </IconButton>
      </TableContainer>

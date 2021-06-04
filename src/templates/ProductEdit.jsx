@@ -58,6 +58,7 @@ const ProductEdit = () => {
           setCategory(data.category);
           setPrice(data.price);
           setDescription(data.description);
+          setSizes(data.sizes);
         })
       }
     
@@ -90,12 +91,12 @@ const ProductEdit = () => {
               onChange={inputPrice} rows={1} value={price} type={"number"}
             />
             <div className="module-spacer--small"/>
-            <SetSizesArea sizes={sizes}/>
+            <SetSizesArea sizes={sizes} setSizes={setSizes}/>
             <div className="module-spacer--small"/>
             <div className="center">
               <PrimaryButton
                  label={"商品情報を保存"}
-                 onClick={() => dispatch(saveProduct(id, name, description, category, gender, price, sizes, images))}
+                 onClick={() => dispatch(saveProduct(id, name, description, category, gender, price, images, sizes))}
               />
             </div>
        </div>

@@ -1,3 +1,3 @@
 export {default as ImageArea} from './ImageArea';
 export {default as ImagePreview} from './ImagePreview';
-export {default as SetSizeArea} from './SetSizesArea';
+export {default as SetSizesArea} from './SetSizesArea';
