@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect'
 
+
 const usersSelector = (state) => state.users;
 /*users: {
   icon: "",
@@ -7,6 +8,8 @@ const usersSelector = (state) => state.users;
   uid: "",
   username:""
 }*/
+
+
 export const getIsSignedIn = createSelector(
   [usersSelector],
   state =>state.isSignedIn

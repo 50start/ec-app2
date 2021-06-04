@@ -1,20 +1,26 @@
-import React,{useCallback, useState} from 'react'
+import React,{useCallback, useState, useEffect} from 'react'
 import {PrimaryButton, SelectBox, TextInput} from "../components/UIkit";
 import {useDispatch} from "react-redux";
 import {saveProduct} from "../reducks/products/operations";
 import ImageArea from '../components/Products/ImageArea';
+import { db } from '../firebase';
+
 
 const ProductEdit = () => {
+  const dispatch = useDispatch();
+  //const path = useSelector((state) => state.router.location.pathname)
+  let id = window.location.pathname.split('/product/edit')[1];//pathを取得
+  if (id !== ""){ //id=>商品情報　編集ページの時
+    id = id.split('/')[1]
+  }
 
-   const dispatch = useDispatch();
-
-   const [name, setName] = useState(""),
-         [description, setDescription] = useState(""),
-         [category, setCategory] = useState(""),
-         [gender, setGender] = useState(""),
-         [images, setImages] = useState([]),
-         [price, setPrice] = useState("");
-
+  const 　[name, setName] = useState(""),
+  　　　　 [description, setDescription] = useState(""),
+  　　　　 [category, setCategory] = useState(""),
+  　　　　 [gender, setGender] = useState(""),
+  　　　　 [images, setImages] = useState([]),
+  　　　　 [price, setPrice] = useState("");
+  
          const inputName = useCallback((event) => {
             setName(event.target.value)
          },[setName])
@@ -37,7 +43,23 @@ const ProductEdit = () => {
             {id: "all", name: "すべて"},
             {id: "male", name: "メンズ"},
             {id: "female", name: "レディース"},
-           ]
+           ];
+
+  useEffect( () => {　//既存のデータをセット 
+      if (id !==""){　//データベースに登録したデータを編集できるようにdata取得
+        db.collection('products').doc(id).get()
+        .then(snapshot => {
+          const data = snapshot.data() //data=>firebaseのproductのdata
+          setName(data.name);
+          setImages(data.images);
+          setGender(data.gender);
+          setCategory(data.category);
+          setPrice(data.price);
+          setDescription(data.description);
+        })
+      }
+    
+    }, [id]);//商品ページのIDが（次の商品、次の商品)と用意する場合idをセット
 
    return(
      <section>
@@ -69,7 +91,7 @@ const ProductEdit = () => {
             <div className="center">
               <PrimaryButton
                  label={"商品情報を保存"}
-                 onClick={() => dispatch(saveProduct(name, description, category, gender, price, images))}
+                 onClick={() => dispatch(saveProduct(id, name, description, category, gender, price, images))}
               />
             </div>
        </div>
