@@ -1,7 +1,37 @@
 import {db, FirebaseTimestamp} from "../../firebase";
 import {push} from "connected-react-router";
+import {deleteProductAction ,fetchProductsAction} from "./actions";
 
-const productsRef = db.collection('products')
+const productsRef = db.collection('products');
+
+export const deleteProduct = (id) => { 
+  return async (dispatch, getState) => { 
+       productsRef.doc(id).delete()  //これだけで削除はできる
+       .then(() => {　//削除した後にreduxのstoreのstateを更新　=> .thenをやる
+         const prevProducts = getState().products.list;　//getState => 現在のstoreの情報をoperationsファイルで取得できる
+         const nextProducts = prevProducts.filter(product => product.id !== id) //現在のproductsリストを取ってきてnextProducts
+         　　　　　　　　　　　　　　　　　　　　　//filter => 配列をぐるぐる回す　配列に回ってきたid以外のもの（削除したもの以外の配列）を新しく作る
+         dispatch(deleteProductAction(nextProducts))　//deleteProductActionにnextProductsを渡す
+       })
+  }
+}
+
+export const fetchProducts = () => {
+  return async (dispatch) => {　
+    productsRef.orderBy('updated_at','desc').get()　
+    .then(snapshots => { 
+      const productList = []
+      snapshots.forEach(snapshot => {
+        const product = snapshot.data() 
+        productList.push(product)
+        })
+        dispatch(fetchProductsAction(productList))
+    })
+  }
+}
+//productsRef=>productsのcollectionのクエリ　クエリ=>URLの末尾につけ足す文字列（変数）
+//fetchProductsAction => actionsで定義されている
+
 
 export const saveProduct = (id, name, description, category, gender, price, images, sizes) =>{
    return async(dispatch) =>{ 
@@ -15,14 +45,14 @@ export const saveProduct = (id, name, description, category, gender, price, imag
          name: name,
          price: parseInt(price, 10),
          sizes: sizes,
-         updateed_at: timestamp
+         updated_at: timestamp
        }
 
        if(id === ""){//編集ページでない時
        const ref = productsRef.doc();
-       data.created_at = timestamp
        id = ref.id;
        data.id = id;
+       data.created_at = timestamp
        }
 
        return productsRef.doc(id).set(data, {merge: true}) //merge: true=> 更新された部分だけ更新をする

@@ -10,8 +10,8 @@ export const listenAuthState = () =>{ //認証リッスン関数の作成
 
          db.collection('users').doc(uid).get() //データベースuserscollectionの中からuidのデーターを受け取る　
          .then(snapshot => {  //クエリ投げる
-           const data = snapshot.data() //dataを取ってくる
-
+          const data = snapshot.data() //dataを取ってくる
+          //console.log(data)
            dispatch(signInAction({
              isSignedIn: true,　//サインインされたよ　false=>true　ユーザーの情報をとる reduxを更新
              role: data.role,
