@@ -71,7 +71,10 @@ const ClosableDrawer = (props) =>{
          classes={{paper: classes.drawerPaper}} //paperというkeyに対してdrawerPaperクラスを渡す
          ModalProps={{keepMounted: true}} //スマホで表示するときにdrawer開いた時のパフォーマンスが上がる
       >
-        <div>
+        <div　
+           onClose={(event) => props.onClose(event)}
+           onKeyDown={(event) => props.onClose(event)}
+        >
           <div className={classes.searchField}>
              <TextInput
               fullWidth={false} label={"キーワードを入力"}　multiline={false}

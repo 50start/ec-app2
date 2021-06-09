@@ -1,6 +1,23 @@
-import {signInAction, signOutAction} from "./actions";
+import {fetchProductsInCartAction, signInAction, signOutAction} from "./actions";
 import {push} from 'connected-react-router';
 import {auth, db, FirebaseTimestamp} from '../../firebase/index'
+
+export const addProductToCart = (addedProduct) => { //ProductDetail.jsxのaddProductCart関数が入ってきている
+  return async (dispatch, getState) => {
+      const uid = getState().users.uid; //現在のreduxのstoreの情報を取る　userのuidの情報をとる
+      const cartRef = db.collection('users').doc(uid).collection('cart').doc()  //新しくcartというサブコレクションに新しくデータを追加する枠を作る
+      addedProduct['cartId'] = cartRef.id; //cartIdを持たせる 
+      await cartRef.set(addedProduct)
+      dispatch(push('/')) 
+   }
+}
+
+export const fetchProductsInCart = (products) => {
+  return async (dispatch) => {
+    dispatch(fetchProductsInCartAction(products))
+    //actionを呼び出す関数
+  }
+}
 
 export const listenAuthState = () =>{ //認証リッスン関数の作成
   return async (dispatch) => {
@@ -11,8 +28,7 @@ export const listenAuthState = () =>{ //認証リッスン関数の作成
          db.collection('users').doc(uid).get() //データベースuserscollectionの中からuidのデーターを受け取る　
          .then(snapshot => {  //クエリ投げる
           const data = snapshot.data() //dataを取ってくる
-          //console.log(data)
-           dispatch(signInAction({
+          dispatch(signInAction({
              isSignedIn: true,　//サインインされたよ　false=>true　ユーザーの情報をとる reduxを更新
              role: data.role,
              uid: uid,

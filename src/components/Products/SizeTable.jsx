@@ -37,9 +37,9 @@ const SizeTable = (props) =>{
                       </TableCell>
                       
                       <TableCell className={classes.iconCell}>
-                      {size.quantity > 0 ?(     //0以上であればIconボタンを表示
-                        <IconButton>
-                        <ShoppingCartIcon />
+                      {size.quantity > 0 ?(     //0以上であればIconボタンを表示　　{/*addProduct=>ProductDetailで関数定義されている*/}
+                        <IconButton onClick={ () => props.addProduct(size.size)}> {/*addProductには選択されたsizeを渡したいmapで回している{size.size}*/}
+                            <ShoppingCartIcon />
                         </IconButton>
                       ):(
                         <div>売り切れ</div>　　　　//0なら売り切れ

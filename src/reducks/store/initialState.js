@@ -3,6 +3,7 @@ const initialState = {
      list:[],//商品情報入れていく配列
  },
  users: {
+    cart: [],
     isSignedIn: false,
     role:"",
     uid: "",
