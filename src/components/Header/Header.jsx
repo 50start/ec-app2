@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState, useCallback} from 'react';
 import {makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -6,7 +6,7 @@ import logo from '../../assets/img/icons/logo.png';
 import {useSelector, useDispatch} from 'react-redux';
 import {getIsSignedIn} from "../../reducks/users/selectors";
 import {push} from "connected-react-router";
-import {HeaderMenus} from "./index";
+import {HeaderMenus, ClosableDrawer} from "./index";
 
 const useStyles = makeStyles({
   root: {
@@ -33,6 +33,18 @@ const Header = () => {
 　　　　　　　　　　　　　　　　　　　　　　　　　　　　　　//useSelectorを使ってログイン状態を取得　reduxのstoreから
    const isSignedIn = getIsSignedIn(selector)     //selector関数を呼び出す
 
+   const [open, setOpen] = useState(false);
+
+   const handleDrawerToggle = useCallback((event) =>{
+      // keydown(キーを押した時)かつタブかシフトだったら何もしないよというif文
+     if(event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')){
+          return;
+        }
+        setOpen(!open) //それ以外はsetOpen(現在のstateを反転させた値)
+   },[setOpen, open]);
+
+   
+
 return(
   <div className={classes.root}>
       <AppBar position="fixed" className={classes.menuBar}>
@@ -42,11 +54,12 @@ return(
           /> {/*callback関数でhome画面に飛ばす*/}
          {isSignedIn && (   //isSignedInがtrueなら
                <div className={classes.iconButtons}> {/*divタグが右寄せ*/}
-                 <HeaderMenus/>
+                 <HeaderMenus handleDrawerToggle={handleDrawerToggle}/>　{/*openする時は*/}
                </div>
          )}
         </Toolbar>
       </AppBar>
+      <ClosableDrawer open={open} onClose={handleDrawerToggle} />
   </div>
 )
 
