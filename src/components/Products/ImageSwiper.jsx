@@ -1,6 +1,6 @@
 import React,{useState} from 'react';
 import Swiper from "react-id-swiper";
-import NoImage from "../../assets/img/no_image.png";
+import NoImage from "../../assets/img/src/no_image.png";
 import 'swiper/css/swiper.css';
 
 const ImageSwiper = (props) => {
@@ -23,7 +23,7 @@ const ImageSwiper = (props) => {
        <Swiper {...params}>
            {images.length === 0 ? (//画像が0だったら(設定されていない商品だったら)
               <div className="p-media__thumb">
-                <img src={NoImage} alt="no image"/>
+                <img src={NoImage} alt="No Image"/>
               </div>
            ) : (//画像がある時 mapでぐるぐる回す
              images.map(image => (

@@ -4,7 +4,7 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
-import NoImage from '../../assets/img/no_image.png';
+import NoImage from '../../assets/img/src/no_image.png';
 import {push} from 'connected-react-router';
 import {useDispatch} from "react-redux";
 import IconButton from '@material-ui/core/IconButton';
