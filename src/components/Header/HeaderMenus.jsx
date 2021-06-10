@@ -8,6 +8,7 @@ import {getProductsInCart, getUserId} from "../../reducks/users/selectors";
 import {useSelector, useDispatch} from "react-redux";
 import {db} from '../../firebase/index';
 import {fetchProductsInCart } from '../../reducks/users/operations';
+import {push} from 'connected-react-router';
 
 
 const HeaderMenus = (props) => {
@@ -47,7 +48,7 @@ const HeaderMenus = (props) => {
   
   return(
     <>
-      <IconButton>
+      <IconButton onClick={ () => dispatch(push('/cart'))}>
         <Badge badgeContent={ProductsInCart.length} color="secondary"> {/*ProductsInCart.length　現在のcartの配列の数分だけバッジがつく*/}
        <ShoppingCartIcon />
         </Badge>
