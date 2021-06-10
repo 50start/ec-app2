@@ -34,11 +34,11 @@ const CartList = () =>{
       <h2 className="u-text__headline">
         ショッピングカート
       </h2>
-      <list className={classes.root}>
+      <List className={classes.root}>
         {productsInCart.length > 0 && ( //productsInCartの要素が１個でもあったら処理
             productsInCart.map(product => <CartListItem key={product.cartId} product={product}/>)//mapで回している時はkeyを指定
         )}
-      </list>
+      </List>
       <div className="module-spacer--medium"/>
       <div className="p-grid__column">
            <PrimaryButton label={"レジへ進む"} onClick={goToOrder} />
