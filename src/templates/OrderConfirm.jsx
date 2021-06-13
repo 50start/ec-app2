@@ -6,6 +6,7 @@ import {CartListItem} from '../components/Products';
 import List from '@material-ui/core/List';
 import Divider from '@material-ui/core/Divider'
 import {PrimaryButton, TextDetail} from "../components/UIkit";
+import { orderProduct } from '../reducks/products/operations';
 
 const useStyles =makeStyles((theme) => ({
     detailBox: {
@@ -46,6 +47,10 @@ const shippingFee = (subtotal >= 10000) ? 0 : 210;  //商品合計が10,000以�
 const tax = subtotal * 0.1;
 const total = subtotal + shippingFee + tax;
 
+const order = useCallback(() =>{
+    dispatch(orderProduct(productsInCart, total))
+},[productsInCart,total]);//productsInCartとtotalが変わるたびに作成する callback関数の第２引数は依存関係にあるものを引数にとる
+
    return(
      <section className="c-section-wrapin">
        <h2 className="u-text__headline">注文の確認</h2>
@@ -63,6 +68,7 @@ const total = subtotal + shippingFee + tax;
               <TextDetail label={"送料"} value={"¥" + shippingFee.toLocaleString()} /> 
               <Divider />
               <TextDetail label={"合計（税込）"} value={"¥" + total.toLocaleString()} /> 
+              <PrimaryButton label={"注文する"} onClick={order}/>
           </div>
         </div>
      </section>
