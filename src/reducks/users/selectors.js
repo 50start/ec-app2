@@ -9,6 +9,12 @@ const usersSelector = (state) => state.users;
   username:""
 }*/
 
+//更新されたstateを取得(get)するための関数
+
+export const getOrdersHistory = createSelector(
+  [usersSelector],
+  state =>state.orders　//更新されたstate
+)
 
 export const getIsSignedIn = createSelector(
   [usersSelector],

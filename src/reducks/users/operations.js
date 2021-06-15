@@ -1,4 +1,4 @@
-import {fetchProductsInCartAction, signInAction, signOutAction} from "./actions";
+import {fetchOrdersHistoryAction, fetchProductsInCartAction, signInAction, signOutAction} from "./actions";
 import {push} from 'connected-react-router';
 import {auth, db, FirebaseTimestamp} from '../../firebase/index'
 
@@ -9,6 +9,26 @@ export const addProductToCart = (addedProduct) => { //ProductDetail.jsxのaddPro
       addedProduct['cartId'] = cartRef.id; //cartIdを持たせる 
       await cartRef.set(addedProduct)
       dispatch(push('/')) 
+   }
+}
+
+export const fetchOrdersHistory = () =>{
+   return async (dispatch, getState) => {
+     const uid = getState().users.uid     //user uidを取得
+     const list = [];
+
+     db.collection('users').doc(uid) //ログインしているユーザーの
+     .collection('orders')//ordersのサブcollectionを見に行って
+     .orderBy('updated_at','desc')//取得した値が更新順に並んで
+     .get()
+     .then(snapshots => {
+       snapshots.forEach( snapshot => {　//それらまとめてsnapshotsで受け取りforEachで一個一個処理
+          const data = snapshot.data() //商品データがsnapshot.dataで取得できる
+          list.push(data)
+        })
+        dispatch(fetchOrdersHistoryAction(list))//forEachが終わったらAcrionを呼び出す
+      })
+     
    }
 }
 
