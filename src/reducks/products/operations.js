@@ -16,14 +16,20 @@ export const deleteProduct = (id) => {
   }
 }
 
-export const fetchProducts = () => {
+export const fetchProducts = (gender, category) => {
   return async (dispatch) => {　
-    productsRef.orderBy('updated_at','desc').get()　
-    .then(snapshots => { 
-      const productList = []
-      snapshots.forEach(snapshot => {
-        const product = snapshot.data() 
-        productList.push(product)
+  let query = productsRef.orderBy('updated_at','desc');
+  //queryパラメーターにorderByだけじゃなくwhere(条件)をつけることができる
+  query = (gender !== "") ? query.where('gender','==', gender) : query;
+  //genderに値が入っていたら（空白でない場合）query.where条件文を入れる
+  query = (category !=="") ? query.where('category', '==', category) :query;
+  //categoryというフィールドがcategoryと一致しているものだけ取ってくる　もし指定されていなかったらそのままquetyを返す
+  query.get()　
+        .then(snapshots => { 
+           const productList = []
+        snapshots.forEach(snapshot => {
+           const product = snapshot.data() 
+           productList.push(product)
         })
         dispatch(fetchProductsAction(productList))
     })

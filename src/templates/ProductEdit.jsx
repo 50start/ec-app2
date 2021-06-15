@@ -21,7 +21,8 @@ const ProductEdit = () => {
   　　　　 [gender, setGender] = useState(""),
   　　　　 [images, setImages] = useState([]),
   　　　　 [price, setPrice] = useState(""),
-  　　　　 [sizes, setSizes] = useState([]);
+  　　　　 [sizes, setSizes] = useState([]),
+  　　　　 [categories, setCategories] = useState([]);
   
          const inputName = useCallback((event) => {
             setName(event.target.value)
@@ -35,13 +36,7 @@ const ProductEdit = () => {
           setPrice(event.target.value)
          },[setPrice])
 
-         const categories = [
-           {id: "tops", name: "トップス"},
-           {id: "shirts", name: "シャツ"},
-           {id: "pants", name: "パンツ"},
-          ]
-
-          const genders = [
+         const genders = [
             {id: "all", name: "すべて"},
             {id: "male", name: "メンズ"},
             {id: "female", name: "レディース"},
@@ -63,6 +58,24 @@ const ProductEdit = () => {
       }
     
     }, [id]);//商品ページのIDが（次の商品、次の商品)と用意する場合idをセット
+
+    useEffect(() => { //componentDidMountと同じ dbのcategories　dbから取ってきた値をsetCategoriesにセットする
+       　db.collection('categories')
+        .orderBy('order','asc') //数字の小さい順から並び替える
+        .get()
+        .then(snapshots => {
+          const list = []
+          snapshots.forEach(snapshot => { //snapshotをforEachで一個一個取り出す
+          const data = snapshot.data()
+          
+          list.push({
+              id: data.id,    //key valueの配列を作る　回す
+              name: data.name
+            })
+          })
+          setCategories(list)
+        })
+    },[]);
 
    return(
      <section>

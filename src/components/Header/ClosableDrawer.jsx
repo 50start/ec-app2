@@ -1,4 +1,4 @@
-import React,{useState, useCallback} from 'react';
+import React,{useState, useEffect, useCallback} from 'react';
 import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
@@ -16,6 +16,7 @@ import {TextInput} from '../UIkit/index';
 import {useDispatch} from "react-redux";
 import {push} from 'connected-react-router';
 import {signOut} from '../../reducks/users/operations';
+import {db} from '../../firebase/index';
 
 const useStyles = makeStyles( (theme) => ({
     drawer: {
@@ -52,12 +53,34 @@ const ClosableDrawer = (props) =>{
      props.onClose(event) 
     　//Headerからpropsとして渡ってきた　onCloseとして渡したhandleDrawerToggle menuが選択されたときに呼び出す
   }
+
+  const [filters, setFilters] = useState([
+    {func: selectMenu, label: "すべて", id:"all", value: "/"}, //Drawerメニュー開いた時に　クリックした時に何が起きるか定義
+    {func: selectMenu, label: "メンズ", id:"male", value: "/?gender=male"}, 
+    {func: selectMenu, label: "レデイース", id:"female", value: "/?gender=female"}
+  ])
   
   const menus = [
     {func: selectMenu, label: "商品登録", icon: <AddCircleIcon/>, id:"register", value: "/product/edit"},
     {func: selectMenu, label: "注文履歴", icon: <HistoryIcon/>, id:"history", value: "/order/history"},
     {func: selectMenu, label: "プロフィール", icon: <PersonIcon/>, id:"profile", value: "/user/mypage"}
   ];
+
+  useEffect(() => { //filtersに作ったカテゴリーを追加していく useEffectでdbと接続する
+　　　　db.collection('categories')
+      .orderBy('order', 'asc')
+      .get()
+      .then(snapshots => {
+        const list = []
+        snapshots.forEach(snapshot => { //snapshotをget
+          const category = snapshot.data()
+          list.push({func: selectMenu, label: category.name, id:category.id, value: `/?category=${category.id}`},) //バッククォーテションで文字列の中にjsの変数を埋め込める
+        　　　　　　　　　　{/*func: selectMenu, label: "すべて", id:"all", value: "/"*/}
+        　　   })
+            setFilters( prevState => [...prevState, ...list]) //prevState => 更新前のstate スプレッド構文を使い新しくlistを作る　
+         　              //新しいlistの中には前回の配列を展開したのを入れてその後に続ける形で今回のlistをスクレプト構文で展開してまた入れる　全体で大きな配列になる
+          })
+  },[]);
 
   return (
     <nav className={classes.drawer}>
@@ -102,6 +125,20 @@ const ClosableDrawer = (props) =>{
                </ListItemIcon>
                <ListItemText primary={"Logout"} />
              </ListItem>
+           </List>
+           <Divider /> {/*境界線*/}
+           <List>
+             {filters.map(filter =>(
+               <ListItem 
+                 button 
+                 key={filter.id} 
+                 onClick={(e) => filter.func(e, filter.value)} //funcというのがselectMenuである　selectMenuを呼び出す　
+                　//dispatch(push(path))のpathはfilter.value(urlのクエリーパラメータ）が渡される　
+                  //connected-react-routerによってリンクしたときにurlが変わるイベントが発生したらfilter.funcを実行する　funcには eとfilter.valueを渡す
+               >
+                  <ListItemText primary={filter.label}/>
+               </ListItem>
+             ))}
            </List>
         </div>
      </Drawer>
